@@ -49,7 +49,9 @@ async function metaFetch<T>(
 
   if (!res.ok) {
     const errorMessage =
-      data?.error?.message || `Meta API error: ${res.status}`;
+      data?.error?.error_user_msg ||
+      data?.error?.message ||
+      `Meta API error: ${res.status}`;
     throw new Error(errorMessage);
   }
 
@@ -92,7 +94,7 @@ export async function createCampaign(
   params.set("status", payload.status);
   params.set(
     "special_ad_categories",
-    JSON.stringify(payload.special_ad_categories)
+    JSON.stringify(payload.special_ad_categories ?? [])
   );
   if (payload.buying_type) params.set("buying_type", payload.buying_type);
   if (payload.bid_strategy) params.set("bid_strategy", payload.bid_strategy);
@@ -104,7 +106,8 @@ export async function createCampaign(
 
   return metaFetch<{ id: string }>(`/${accountId}/campaigns`, {
     method: "POST",
-    body: params,
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: params.toString(),
   });
 }
 
