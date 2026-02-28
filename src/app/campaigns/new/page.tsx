@@ -136,7 +136,7 @@ export default function NewCampaignPage() {
         return;
       }
 
-      router.push("/campaigns");
+      router.push(`/campaigns/${data.id}`);
     } catch {
       setError("Fehler beim Erstellen der Kampagne");
     } finally {

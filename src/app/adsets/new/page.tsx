@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMetaApi } from "@/lib/hooks";
 import { LoadingPage } from "@/components/ui/loading";
 import type {
@@ -41,6 +41,9 @@ const countries = [
 
 export default function NewAdSetPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const presetCampaignId = searchParams.get("campaign_id") || "";
+
   const { data: campaignsData, isLoading: campaignsLoading } =
     useMetaApi<MetaPaginatedResponse<Campaign>>("/api/meta/campaigns");
 
@@ -48,7 +51,7 @@ export default function NewAdSetPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState("");
-  const [campaignId, setCampaignId] = useState("");
+  const [campaignId, setCampaignId] = useState(presetCampaignId);
   const [status, setStatus] = useState<AdSetStatus>("PAUSED");
   const [dailyBudget, setDailyBudget] = useState("");
   const [billingEvent, setBillingEvent] = useState<BillingEvent>("IMPRESSIONS");
@@ -99,7 +102,7 @@ export default function NewAdSetPage() {
         return;
       }
 
-      router.push("/adsets");
+      router.push(campaignId ? `/campaigns/${campaignId}` : "/adsets");
     } catch {
       setError("Fehler beim Erstellen des Ad Sets");
     } finally {

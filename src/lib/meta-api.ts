@@ -225,10 +225,14 @@ export async function updateAdSet(
 // ── Ads ──
 
 export async function getAds(
-  adSetId?: string
+  filterBy?: { adSetId?: string; campaignId?: string }
 ): Promise<MetaPaginatedResponse<Ad>> {
   const accountId = getAdAccountId();
-  const base = adSetId ? `/${adSetId}` : `/${accountId}`;
+  const base = filterBy?.adSetId
+    ? `/${filterBy.adSetId}`
+    : filterBy?.campaignId
+    ? `/${filterBy.campaignId}`
+    : `/${accountId}`;
   return metaFetch<MetaPaginatedResponse<Ad>>(
     `${base}/ads?fields=id,name,status,adset_id,campaign_id,creative,created_time,updated_time&limit=50`
   );

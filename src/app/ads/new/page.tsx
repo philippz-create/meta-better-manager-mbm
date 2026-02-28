@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMetaApi } from "@/lib/hooks";
 import { LoadingPage } from "@/components/ui/loading";
 import type {
@@ -27,6 +27,9 @@ const ctaTypes = [
 
 export default function NewAdPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const presetAdSetId = searchParams.get("adset_id") || "";
+  const presetCampaignId = searchParams.get("campaign_id") || "";
 
   const { data: adSetsData, isLoading: adSetsLoading } =
     useMetaApi<MetaPaginatedResponse<AdSet>>("/api/meta/adsets");
@@ -52,7 +55,7 @@ export default function NewAdPage() {
 
   // Ad fields
   const [adName, setAdName] = useState("");
-  const [adSetId, setAdSetId] = useState("");
+  const [adSetId, setAdSetId] = useState(presetAdSetId);
   const [adStatus, setAdStatus] = useState<AdStatus>("PAUSED");
   const [useExistingCreative, setUseExistingCreative] = useState(false);
   const [existingCreativeId, setExistingCreativeId] = useState("");
@@ -128,7 +131,7 @@ export default function NewAdPage() {
         return;
       }
 
-      router.push("/ads");
+      router.push(presetCampaignId ? `/campaigns/${presetCampaignId}` : "/ads");
     } catch {
       setError("Fehler beim Erstellen der Anzeige");
     } finally {

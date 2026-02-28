@@ -6,7 +6,8 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const adSetId = searchParams.get("adset_id") || undefined;
-    const ads = await getAds(adSetId);
+    const campaignId = searchParams.get("campaign_id") || undefined;
+    const ads = await getAds({ adSetId, campaignId });
     return NextResponse.json(ads);
   } catch (error) {
     const message =

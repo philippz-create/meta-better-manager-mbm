@@ -128,9 +128,9 @@ export default function CampaignsPage() {
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-1">
-                    <h3 className="font-semibold text-gray-900 truncate">
+                    <Link href={`/campaigns/${campaign.id}`} className="font-semibold text-gray-900 truncate hover:text-blue-600 transition-colors">
                       {campaign.name}
-                    </h3>
+                    </Link>
                     <StatusBadge status={campaign.status} />
                   </div>
                   <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
