@@ -68,6 +68,8 @@ function NewAdSetForm() {
   const [ageMax, setAgeMax] = useState("65");
   const [genders, setGenders] = useState<number[]>([]);
   const [selectedCountries, setSelectedCountries] = useState<string[]>(["DE"]);
+  const [bidStrategy, setBidStrategy] = useState<"LOWEST_COST_WITHOUT_CAP" | "LOWEST_COST_WITH_BID_CAP" | "COST_CAP">("LOWEST_COST_WITHOUT_CAP");
+  const [bidAmount, setBidAmount] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
 
@@ -83,8 +85,12 @@ function NewAdSetForm() {
         status,
         billing_event: billingEvent,
         optimization_goal: optimizationGoal,
+        bid_strategy: bidStrategy,
         ...(dailyBudget
           ? { daily_budget: String(Math.round(parseFloat(dailyBudget) * 100)) }
+          : {}),
+        ...(bidAmount && bidStrategy !== "LOWEST_COST_WITHOUT_CAP"
+          ? { bid_amount: String(Math.round(parseFloat(bidAmount) * 100)) }
           : {}),
         ...(startTime ? { start_time: new Date(startTime).toISOString() } : {}),
         ...(endTime ? { end_time: new Date(endTime).toISOString() } : {}),
@@ -228,6 +234,51 @@ function NewAdSetForm() {
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">€</span>
           </div>
         </div>
+
+        {/* Bid Strategy */}
+        <div>
+          <label htmlFor="bidStrategy" className="label">Gebotsstrategie *</label>
+          <select
+            id="bidStrategy"
+            value={bidStrategy}
+            onChange={(e) => setBidStrategy(e.target.value as typeof bidStrategy)}
+            className="select"
+          >
+            <option value="LOWEST_COST_WITHOUT_CAP">Niedrigste Kosten (automatisch)</option>
+            <option value="LOWEST_COST_WITH_BID_CAP">Gebotslimit (Bid Cap)</option>
+            <option value="COST_CAP">Kostenlimit (Cost Cap)</option>
+          </select>
+          <p className="text-xs text-gray-400 mt-1">
+            {bidStrategy === "LOWEST_COST_WITHOUT_CAP"
+              ? "Meta optimiert automatisch auf die niedrigsten Kosten."
+              : bidStrategy === "LOWEST_COST_WITH_BID_CAP"
+              ? "Setze ein maximales Gebot pro Ergebnis."
+              : "Setze durchschnittliche Zielkosten pro Ergebnis."}
+          </p>
+        </div>
+
+        {/* Bid Amount - only for strategies that require it */}
+        {bidStrategy !== "LOWEST_COST_WITHOUT_CAP" && (
+          <div>
+            <label htmlFor="bidAmount" className="label">
+              {bidStrategy === "LOWEST_COST_WITH_BID_CAP" ? "Max. Gebot (EUR)" : "Zielkosten (EUR)"} *
+            </label>
+            <div className="relative">
+              <input
+                id="bidAmount"
+                type="number"
+                step="0.01"
+                min="0.01"
+                value={bidAmount}
+                onChange={(e) => setBidAmount(e.target.value)}
+                className="input pl-8"
+                placeholder="z.B. 2.50"
+                required
+              />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">€</span>
+            </div>
+          </div>
+        )}
 
         {/* Targeting Section */}
         <div className="card p-5">

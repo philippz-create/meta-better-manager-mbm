@@ -193,6 +193,7 @@ export async function createAdSet(
   if (payload.promoted_object)
     params.set("promoted_object", JSON.stringify(payload.promoted_object));
   if (payload.bid_amount) params.set("bid_amount", payload.bid_amount);
+  if (payload.bid_strategy) params.set("bid_strategy", payload.bid_strategy);
   if (payload.attribution_spec)
     params.set("attribution_spec", JSON.stringify(payload.attribution_spec));
 

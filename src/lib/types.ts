@@ -176,6 +176,7 @@ export interface CreateAdSetPayload {
   destination_type?: DestinationType;
   promoted_object?: PromotedObject;
   bid_amount?: string;
+  bid_strategy?: "LOWEST_COST_WITHOUT_CAP" | "LOWEST_COST_WITH_BID_CAP" | "COST_CAP";
   attribution_spec?: Array<{ event_type: string; window_days: number }>;
 }
 
