@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMetaApi } from "@/lib/hooks";
 import { LoadingPage } from "@/components/ui/loading";
@@ -40,6 +40,14 @@ const countries = [
 ];
 
 export default function NewAdSetPage() {
+  return (
+    <Suspense fallback={<LoadingPage />}>
+      <NewAdSetForm />
+    </Suspense>
+  );
+}
+
+function NewAdSetForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const presetCampaignId = searchParams.get("campaign_id") || "";

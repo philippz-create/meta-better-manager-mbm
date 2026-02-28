@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMetaApi } from "@/lib/hooks";
 import { LoadingPage } from "@/components/ui/loading";
@@ -26,6 +26,14 @@ const ctaTypes = [
 ];
 
 export default function NewAdPage() {
+  return (
+    <Suspense fallback={<LoadingPage />}>
+      <NewAdForm />
+    </Suspense>
+  );
+}
+
+function NewAdForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const presetAdSetId = searchParams.get("adset_id") || "";
