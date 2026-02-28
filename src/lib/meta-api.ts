@@ -72,13 +72,13 @@ export async function getCampaigns(): Promise<
 > {
   const accountId = getAdAccountId();
   return metaFetch<MetaPaginatedResponse<Campaign>>(
-    `/${accountId}/campaigns?fields=id,name,status,objective,daily_budget,lifetime_budget,start_time,stop_time,created_time,updated_time,special_ad_categories&limit=50`
+    `/${accountId}/campaigns?fields=id,name,status,objective,daily_budget,lifetime_budget,start_time,stop_time,created_time,updated_time,buying_type,bid_strategy,special_ad_categories&limit=50`
   );
 }
 
 export async function getCampaign(campaignId: string): Promise<Campaign> {
   return metaFetch<Campaign>(
-    `/${campaignId}?fields=id,name,status,objective,daily_budget,lifetime_budget,start_time,stop_time,created_time,updated_time,special_ad_categories`
+    `/${campaignId}?fields=id,name,status,objective,daily_budget,lifetime_budget,start_time,stop_time,created_time,updated_time,buying_type,bid_strategy,special_ad_categories`
   );
 }
 
@@ -94,6 +94,8 @@ export async function createCampaign(
     "special_ad_categories",
     JSON.stringify(payload.special_ad_categories)
   );
+  if (payload.buying_type) params.set("buying_type", payload.buying_type);
+  if (payload.bid_strategy) params.set("bid_strategy", payload.bid_strategy);
   if (payload.daily_budget) params.set("daily_budget", payload.daily_budget);
   if (payload.lifetime_budget)
     params.set("lifetime_budget", payload.lifetime_budget);
@@ -116,6 +118,7 @@ export async function updateCampaign(
   if (payload.daily_budget) params.set("daily_budget", payload.daily_budget);
   if (payload.lifetime_budget)
     params.set("lifetime_budget", payload.lifetime_budget);
+  if (payload.bid_strategy) params.set("bid_strategy", payload.bid_strategy);
 
   return metaFetch<{ success: boolean }>(`/${campaignId}`, {
     method: "POST",
@@ -159,7 +162,7 @@ export async function getAdSets(
   const accountId = getAdAccountId();
   const base = campaignId ? `/${campaignId}` : `/${accountId}`;
   return metaFetch<MetaPaginatedResponse<AdSet>>(
-    `${base}/adsets?fields=id,name,status,campaign_id,daily_budget,lifetime_budget,start_time,end_time,billing_event,optimization_goal,targeting,created_time,updated_time&limit=50`
+    `${base}/adsets?fields=id,name,status,campaign_id,daily_budget,lifetime_budget,start_time,end_time,billing_event,optimization_goal,targeting,destination_type,promoted_object,bid_amount,created_time,updated_time&limit=50`
   );
 }
 
@@ -174,11 +177,19 @@ export async function createAdSet(
   params.set("billing_event", payload.billing_event);
   params.set("optimization_goal", payload.optimization_goal);
   params.set("targeting", JSON.stringify(payload.targeting));
+
   if (payload.daily_budget) params.set("daily_budget", payload.daily_budget);
   if (payload.lifetime_budget)
     params.set("lifetime_budget", payload.lifetime_budget);
   if (payload.start_time) params.set("start_time", payload.start_time);
   if (payload.end_time) params.set("end_time", payload.end_time);
+  if (payload.destination_type)
+    params.set("destination_type", payload.destination_type);
+  if (payload.promoted_object)
+    params.set("promoted_object", JSON.stringify(payload.promoted_object));
+  if (payload.bid_amount) params.set("bid_amount", payload.bid_amount);
+  if (payload.attribution_spec)
+    params.set("attribution_spec", JSON.stringify(payload.attribution_spec));
 
   return metaFetch<{ id: string }>(`/${accountId}/adsets`, {
     method: "POST",
@@ -194,8 +205,11 @@ export async function updateAdSet(
   if (payload.name) params.set("name", payload.name);
   if (payload.status) params.set("status", payload.status);
   if (payload.daily_budget) params.set("daily_budget", payload.daily_budget);
+  if (payload.lifetime_budget)
+    params.set("lifetime_budget", payload.lifetime_budget);
   if (payload.targeting)
     params.set("targeting", JSON.stringify(payload.targeting));
+  if (payload.bid_amount) params.set("bid_amount", payload.bid_amount);
 
   return metaFetch<{ success: boolean }>(`/${adSetId}`, {
     method: "POST",

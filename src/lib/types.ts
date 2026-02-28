@@ -21,6 +21,13 @@ export type CampaignObjective =
   | "OUTCOME_TRAFFIC"
   | "OUTCOME_APP_PROMOTION";
 
+export type BuyingType = "AUCTION" | "RESERVED";
+
+export type BidStrategy =
+  | "LOWEST_COST_WITHOUT_CAP"
+  | "LOWEST_COST_WITH_BID_CAP"
+  | "COST_CAP";
+
 export interface Campaign {
   id: string;
   name: string;
@@ -33,6 +40,7 @@ export interface Campaign {
   created_time: string;
   updated_time: string;
   buying_type?: string;
+  bid_strategy?: string;
   special_ad_categories: string[];
   insights?: CampaignInsights;
 }
@@ -42,6 +50,8 @@ export interface CreateCampaignPayload {
   objective: CampaignObjective;
   status: CampaignStatus;
   special_ad_categories: string[];
+  buying_type?: BuyingType;
+  bid_strategy?: BidStrategy;
   daily_budget?: string;
   lifetime_budget?: string;
   start_time?: string;
@@ -51,7 +61,13 @@ export interface CreateCampaignPayload {
 // ── Ad Set ──
 
 export type AdSetStatus = "ACTIVE" | "PAUSED" | "DELETED" | "ARCHIVED";
-export type BillingEvent = "IMPRESSIONS" | "LINK_CLICKS" | "APP_INSTALLS";
+
+export type BillingEvent =
+  | "IMPRESSIONS"
+  | "LINK_CLICKS"
+  | "APP_INSTALLS"
+  | "THRUPLAY";
+
 export type OptimizationGoal =
   | "REACH"
   | "IMPRESSIONS"
@@ -59,7 +75,70 @@ export type OptimizationGoal =
   | "LANDING_PAGE_VIEWS"
   | "LEAD_GENERATION"
   | "CONVERSIONS"
-  | "VALUE";
+  | "OFFSITE_CONVERSIONS"
+  | "VALUE"
+  | "POST_ENGAGEMENT"
+  | "PAGE_LIKES"
+  | "THRUPLAY"
+  | "APP_INSTALLS"
+  | "AD_RECALL_LIFT"
+  | "QUALITY_LEAD";
+
+export type DestinationType =
+  | "WEBSITE"
+  | "APP"
+  | "MESSENGER"
+  | "INSTAGRAM_DIRECT"
+  | "WHATSAPP"
+  | "PHONE_CALL"
+  | "ON_AD"
+  | "ON_POST"
+  | "ON_EVENT"
+  | "ON_PAGE"
+  | "ON_VIDEO"
+  | "SHOP_AUTOMATIC"
+  | "UNDEFINED";
+
+export interface PromotedObject {
+  pixel_id?: string;
+  custom_event_type?: string;
+  page_id?: string;
+  application_id?: string;
+  object_store_url?: string;
+  offer_id?: string;
+}
+
+export interface Targeting {
+  age_min?: number;
+  age_max?: number;
+  genders?: number[];
+  geo_locations?: {
+    countries?: string[];
+    regions?: { key: string; name?: string }[];
+    cities?: { key: string; name?: string; radius?: number; distance_unit?: string }[];
+    zips?: { key: string }[];
+    location_types?: string[];
+  };
+  interests?: { id: string; name: string }[];
+  behaviors?: { id: string; name: string }[];
+  custom_audiences?: { id: string; name?: string }[];
+  excluded_custom_audiences?: { id: string; name?: string }[];
+  locales?: number[];
+  publisher_platforms?: string[];
+  facebook_positions?: string[];
+  instagram_positions?: string[];
+  audience_network_positions?: string[];
+  messenger_positions?: string[];
+  device_platforms?: string[];
+  flexible_spec?: Array<{
+    interests?: { id: string; name: string }[];
+    behaviors?: { id: string; name: string }[];
+  }>;
+  exclusions?: {
+    interests?: { id: string; name: string }[];
+    behaviors?: { id: string; name: string }[];
+  };
+}
 
 export interface AdSet {
   id: string;
@@ -73,20 +152,13 @@ export interface AdSet {
   billing_event: BillingEvent;
   optimization_goal: OptimizationGoal;
   targeting?: Targeting;
+  destination_type?: DestinationType;
+  promoted_object?: PromotedObject;
+  bid_amount?: string;
+  bid_strategy?: string;
+  attribution_spec?: Array<{ event_type: string; window_days: number }>;
   created_time: string;
   updated_time: string;
-}
-
-export interface Targeting {
-  age_min?: number;
-  age_max?: number;
-  genders?: number[];
-  geo_locations?: {
-    countries?: string[];
-    cities?: { key: string; name: string }[];
-  };
-  interests?: { id: string; name: string }[];
-  locales?: number[];
 }
 
 export interface CreateAdSetPayload {
@@ -100,6 +172,10 @@ export interface CreateAdSetPayload {
   billing_event: BillingEvent;
   optimization_goal: OptimizationGoal;
   targeting: Targeting;
+  destination_type?: DestinationType;
+  promoted_object?: PromotedObject;
+  bid_amount?: string;
+  attribution_spec?: Array<{ event_type: string; window_days: number }>;
 }
 
 // ── Ad ──
