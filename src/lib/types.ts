@@ -56,6 +56,7 @@ export interface CreateCampaignPayload {
   lifetime_budget?: string;
   start_time?: string;
   stop_time?: string;
+  is_adset_budget_sharing_enabled?: boolean;
 }
 
 // ── Ad Set ──

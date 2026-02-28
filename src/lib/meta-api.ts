@@ -103,6 +103,8 @@ export async function createCampaign(
     params.set("lifetime_budget", payload.lifetime_budget);
   if (payload.start_time) params.set("start_time", payload.start_time);
   if (payload.stop_time) params.set("stop_time", payload.stop_time);
+  if (payload.is_adset_budget_sharing_enabled !== undefined)
+    params.set("is_adset_budget_sharing_enabled", String(payload.is_adset_budget_sharing_enabled));
 
   return metaFetch<{ id: string }>(`/${accountId}/campaigns`, {
     method: "POST",

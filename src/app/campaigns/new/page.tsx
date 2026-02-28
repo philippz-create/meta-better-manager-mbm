@@ -80,6 +80,7 @@ export default function NewCampaignPage() {
   const [budgetType, setBudgetType] = useState<"daily" | "lifetime">("daily");
   const [budget, setBudget] = useState("");
   const [bidStrategy, setBidStrategy] = useState<BidStrategy>("LOWEST_COST_WITHOUT_CAP");
+  const [adsetBudgetSharing, setAdsetBudgetSharing] = useState(false);
 
   // Schedule (for lifetime budget)
   const [startTime, setStartTime] = useState("");
@@ -101,6 +102,7 @@ export default function NewCampaignPage() {
         status,
         buying_type: buyingType,
         special_ad_categories: specialCategory === "NONE" ? [] : [specialCategory],
+        ...(!isCBO && { is_adset_budget_sharing_enabled: adsetBudgetSharing }),
       };
 
       // CBO: Budget at campaign level
@@ -291,6 +293,26 @@ export default function NewCampaignPage() {
               </p>
             </button>
           </div>
+
+          {/* ABO: Budget Sharing */}
+          {!isCBO && (
+            <div className="pt-4 border-t border-gray-200">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={adsetBudgetSharing}
+                  onChange={(e) => setAdsetBudgetSharing(e.target.checked)}
+                  className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                />
+                <div>
+                  <p className="font-medium text-sm text-gray-900">Ad-Set-Budget-Sharing</p>
+                  <p className="text-xs text-gray-500">
+                    Anzeigengruppen dürfen bis zu 20% ihres Budgets teilen, um die Gesamtperformance zu verbessern
+                  </p>
+                </div>
+              </label>
+            </div>
+          )}
 
           {/* CBO Budget Settings */}
           {isCBO && (
